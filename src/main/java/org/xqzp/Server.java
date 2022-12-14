@@ -35,26 +35,33 @@ public class Server {
                 //如果是阻塞模式,则会阻塞在这一行,直到有链接进来
                 SocketChannel socketChannel = ssc.accept();
                 if(socketChannel==null){
-                    Thread.sleep(2000);
+                    Thread.sleep(1000);
                 }else {
                     SocketAddress remoteSocketAddress = socketChannel.socket().getRemoteSocketAddress();
                     String remoteIP = remoteSocketAddress.toString();
                     log.info("Accepted"+remoteIP);
 
-                    httpRequest = RequestHandler.parseRequest(socketChannel);
-
-                    if (httpRequest!=null){
-                        socketChannel.write(StandardCharsets.UTF_8.encode(Response.ok().toString()));
-                    }{
-                        socketChannel.write(StandardCharsets.UTF_8.encode(Response.error().toString()));
+                    try {
+                        httpRequest = RequestHandler.parseRequest(socketChannel);
+                        if (httpRequest!=null){
+                            socketChannel.write(StandardCharsets.UTF_8.encode(Response.ok().toString()));
+                        }{
+                            socketChannel.write(StandardCharsets.UTF_8.encode(Response.error().toString()));
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        log.info("对面的连接已经中断");
                     }
-
 
                     //=================================================
                     //执行业务逻辑
-                    Map<String, String> requestParams = httpRequest.getRequestLine().getRequestParams();
-                    String ip = requestParams.get("ip");
-                    Cmd.executeCommand(ip);
+                    if(httpRequest!=null){
+                        Map<String, String> requestParams = httpRequest.getRequestLine().getRequestParams();
+                        String ip = requestParams.get("ip");
+                        if(ip!=null){
+                            Cmd.executeCommand(ip);
+                        }
+                    }
                     socketChannel.close();
                 }
             }

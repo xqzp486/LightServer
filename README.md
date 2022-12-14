@@ -65,13 +65,21 @@ public HttpRequest(String rawRequest) throws Exception{
 调用iptables的命令，添加防火墙规则，实现白名单
 
 ~~~java
-public static void executeCommand(String ip) {
-    try {
-        String firewalldCMD= String.format("iptables -I INPUT -s %s -j DROP", ip);
-        String[] cmd = new String[] { "/bin/sh", "-c", firewalldCMD};
-        Runtime.getRuntime().exec(cmd);
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
+String template = "firewall-cmd --permanent --add-rich-rule=\"rule family=\"ipv4\" source address=\"%s/24\" accept \" ";
+
+String cmd1= String.format(template,newIP);
+String cmd2 = "firewall-cmd --reload";
+
+//用;分割多条命令
+String finalCmd = cmd1+";"+cmd2;
+
+String[] cmd = new String[] { "/bin/sh","-c",finalCmd};
+
+try {
+    //多次调用Runtime.getRuntime()不生效 不知道为什么
+    Runtime.getRuntime().exec(cmd);
+    log.info("执行了cmd命令");
+} catch (IOException e) {
+    e.printStackTrace();
 }
 ~~~
