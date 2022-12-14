@@ -62,7 +62,7 @@ public HttpRequest(String rawRequest) throws Exception{
 
 ### 3、服务器白名单
 
-调用iptables的命令，添加防火墙规则，实现白名单
+调用firewalld富规则命令，添加防火墙规则，实现白名单
 
 ~~~java
 String template = "firewall-cmd --permanent --add-rich-rule=\"rule family=\"ipv4\" source address=\"%s/24\" accept \" ";
