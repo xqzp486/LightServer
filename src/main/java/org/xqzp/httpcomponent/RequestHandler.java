@@ -48,10 +48,10 @@ public class RequestHandler {
             log.info(request.toString());
         } catch (Exception e) {
             log.error("Http请求报文解析异常");
+            log.info(receive);
             e.printStackTrace();
             throw new HttpParseException();
         }
-
         return request;
     }
 }

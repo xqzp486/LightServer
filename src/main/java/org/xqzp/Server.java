@@ -60,6 +60,8 @@ public class Server {
                         String ip = requestParams.get("ip");
                         if(ip!=null){
                             Cmd.executeCommand(ip);
+                        }else {
+                            socketChannel.write(StandardCharsets.UTF_8.encode(Response.error().toString()));
                         }
                     }
                     socketChannel.close();

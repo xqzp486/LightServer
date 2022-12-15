@@ -101,7 +101,12 @@ public class HttpRequest {
         String[] heads = rawRequestHead.split("\r\n");
         for (String head : heads) {
             String[] headkeyvalue = head.split(": ");
-            this.requestHead.put(headkeyvalue[0], headkeyvalue[1]);
+            if(headkeyvalue.length==1){
+                this.requestHead.put(headkeyvalue[0],"");
+            }else {
+                this.requestHead.put(headkeyvalue[0], headkeyvalue[1]);
+            }
+
         }
     }
 
